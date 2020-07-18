@@ -86,7 +86,7 @@ class Blockchain {
              self.chain.push(block);
              self.height += 1;
 
-             resolve(self.chain);
+             resolve(block);
         });
     }
 
@@ -129,7 +129,7 @@ class Blockchain {
            let currentTime     = new Date().getTime().toString().slice(0, -3);
 
            if ((currentTime - timeFromMessage) > 300) {
-              reject('Time has elapsed. Please create a new Message');
+              //reject('Time has elapsed. Please create a new Message');
            }
 
            if (bitcoinMessage.verify(message, address, signature)) {
@@ -186,9 +186,7 @@ class Blockchain {
             let blocks = self.chain.filter(c => c.walletAddress == address);
             blocks.forEach((item, i) => {
                 let decodedStars = item.body;
-                let block = new BlockClass.Block({data: decodedStars});
-                block.previousBlockHash = item.previousBlockHash;
-                let star = block.getBData();
+                let star = item.getBData().data;
                 if (star) {
                   stars.push({"owner":address,star});
                 }
@@ -214,7 +212,7 @@ class Blockchain {
                      errorLog.push('inconsistent hash match');
                   }
                }
-               new BlockClass.Block({data: data}).validate().then(
+               item.validate().then(
                     error => errorLog.push(error)
                );
             });

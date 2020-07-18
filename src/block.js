@@ -41,7 +41,11 @@ class Block {
             // Save in auxiliary variable the current block hash
             let currentHash = self.hash;
 
-            let hashFromBlock = SHA256(self).toString();
+            self.hash = null;
+
+            let hashFromBlock = SHA256(JSON.stringify(self)).toString();
+
+            self.hash = currentHash;
 
             resolve(currentHash==hashFromBlock);
 
@@ -64,16 +68,7 @@ class Block {
      *     or Reject with an error.
      */
     getBData() {
-        let data = hex2ascii(this.body);
-
-        let prevHash = this.previousBlockHash;
-        data = JSON.parse(hex2ascii(JSON.parse(data).data));
-
-        if (data && prevHash) {
-           return data.data;
-        }
-
-				return null;
+				return JSON.parse(hex2ascii(this.body));
         // Getting the encoded data saved in the Block
         // Decoding the data to retrieve the JSON representation of the object
         // Parse the data to an object to be retrieve.
